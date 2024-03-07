@@ -1,29 +1,20 @@
 mod app;
-use log::{info, trace,LevelFilter};
+use crate::app::routes;
+use actix_web::{App, HttpServer};
 use env_logger::Builder;
-use actix_web::{web, App, HttpServer, Responder};
-
-async fn index() -> impl Responder {
-    "Hello, world!"
-}
+use log::{info, trace, LevelFilter};
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-
     // init logger
-    Builder::new()
-        .filter(None, LevelFilter::Info)
-        .init();
+    Builder::new().filter(None, LevelFilter::Info).init();
 
     trace!("quotes starting...");
     info!("quotes starting...");
 
     // init server
-    HttpServer::new(|| {
-        App::new()
-            .route("/", web::get().to(index))
-    })
-    .bind("127.0.0.1:8080")?
-    .run()
-    .await   
+    HttpServer::new(|| App::new().configure(routes::configure))
+        .bind("127.0.0.1:8080")?
+        .run()
+        .await
 }
