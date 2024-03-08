@@ -1,9 +1,5 @@
 use actix_web::{get, HttpResponse, Responder};
 use log::info;
-#[derive(serde::Serialize, utoipa::ToSchema)]
-pub struct Response {
-    data: String,
-}
 
 
 #[utoipa::path(
