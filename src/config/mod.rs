@@ -52,7 +52,7 @@ impl Settings {
         let mut s = Config::new();
         s.set("env", env.clone())?;
 
-        s.merge(File::with_name("./config.toml"))?;
+        s.merge(File::with_name("./config.json"))?;
         s.merge(File::with_name(&format!("{}{}", "", env)))?;
         s.merge(Environment::with_prefix("quote").separator("__"))?;
         s.try_into()

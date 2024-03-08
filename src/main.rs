@@ -28,6 +28,11 @@ async fn main() -> std::io::Result<()> {
     // init logger
     Builder::new().filter(None, log_level).init();
 
+    info!(
+        "Server started at {}:{} and ENV:{:?}",
+        settings.server.url, settings.server.port, settings.env
+    );
+
     // init server
     HttpServer::new(move || App::new().configure(routes::configure))
         .bind(format!("{}:{}", settings.server.url, settings.server.port))?

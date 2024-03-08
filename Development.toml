@@ -1,8 +1,0 @@
-[server]
-port = "8080"
-url = "localhost"
-
-[log]
-level = "debug"
-
-env = "Development"
