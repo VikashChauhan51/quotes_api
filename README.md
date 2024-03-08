@@ -1,2 +1,2 @@
 # quotes_api
-Sample rust web API using Active web framework
+Sample rust web API using Actix web framework
