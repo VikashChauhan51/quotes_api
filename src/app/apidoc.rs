@@ -1,6 +1,6 @@
 
 use utoipa::OpenApi;
-use crate::app::handlers;
+use crate::app::quote_handlers;
 use crate::models;
 use utoipa::{
     openapi::security::{HttpAuthScheme, HttpBuilder, SecurityScheme},
@@ -10,11 +10,16 @@ use utoipa::{
 #[derive(OpenApi)]
     #[openapi(
         paths(
-            handlers::index, // handlers endpoints
+            quote_handlers::get_quotes, 
+            quote_handlers::get_quote, 
+            quote_handlers::add_quote, 
+            quote_handlers::update_quote, 
+            quote_handlers::delete_quote, 
         ),
         components(
             schemas(
-                models::response::Response //schema models
+                models::create_quote::CreateQuote,
+                models::quote::Quote,
             ),
         ),
         modifiers(&SecurityModifier)
