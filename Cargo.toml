@@ -19,7 +19,7 @@ async-trait = "0.1.77"
 warp = "0.2"
 config = "0.10"
 lazy_static = "1.4"
-
+actix-cors = "0.6.4"
 
 # SWAGGER SECIFIC DEPENDENCIES
 utoipa = { version = "4.1.0", features = ["actix_extras", "chrono"] }

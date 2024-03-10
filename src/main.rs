@@ -6,6 +6,7 @@ use crate::app::routes;
 use actix_web::{web, App, HttpServer};
 use env_logger::Builder;
 use log::{info, trace, LevelFilter};
+use actix_cors::Cors;
 
 use std::collections::HashMap;
 use std::sync::{Arc, RwLock};
@@ -45,6 +46,13 @@ async fn main() -> std::io::Result<()> {
         App::new()
             .app_data(web::Data::new(shared_map.clone()))
             .configure(routes::configure)
+            .wrap(
+                Cors::default()
+                    .allow_any_method()
+                    .allow_any_origin()
+                    .allow_any_header()
+                    .max_age(3600),
+            )
     })
     .bind(format!("{}:{}", settings.server.url, settings.server.port))?
     .run()
