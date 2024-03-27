@@ -6,6 +6,7 @@ use log::info;
 use std::collections::HashMap;
 use std::sync::{Arc, RwLock};
 use uuid::Uuid;
+use validator::Validate;
 
 type SharedMap = Arc<RwLock<HashMap<String, Quote>>>;
 #[utoipa::path(
@@ -44,7 +45,8 @@ pub async fn get_quote(data: web::Data<SharedMap>, path: web::Path<String>) -> i
 
 #[utoipa::path(
     responses(
-        (status = 201, description = "Creates a new quote", body = CreateQuote)
+        (status = 201, description = "Creates a new quote", body = CreateQuote),
+        (status = 404, description = "Invalid model")
     )
 )]
 #[post("/api/v1/quote")]
@@ -54,16 +56,22 @@ pub async fn add_quote(
 ) -> impl Responder {
     info!("add quote called.");
     print!("{:?}", quote_model.message);
-    let mut write_guard = data.write().unwrap();
-    let quote_uuid = Uuid::new_v4();
-    write_guard.insert(
-        quote_uuid.to_string(),
-        Quote {
-            id: quote_uuid.to_string(),
-            message: quote_model.message.clone(),
-        },
-    );
-    HttpResponse::Created().finish()
+
+    match quote_model.validate() {
+        Ok(_) => {
+            let mut write_guard = data.write().unwrap();
+            let quote_uuid = Uuid::new_v4();
+            write_guard.insert(
+                quote_uuid.to_string(),
+                Quote {
+                    id: quote_uuid.to_string(),
+                    message: quote_model.message.clone(),
+                },
+            );
+            HttpResponse::Created().finish()
+        }
+        Err(e) => HttpResponse::BadRequest().body(format!("Validation error: {:?}", e)),
+    }
 }
 
 #[utoipa::path(
@@ -83,13 +91,18 @@ pub async fn update_quote(
     print!("{}", id);
     print!("{:?}", quote_model.message);
 
-    let mut write_guard = data.write().unwrap();
-    match write_guard.get_mut(&id) {
-        Some(quote) => {
-            quote.message = quote_model.message.clone();
-            HttpResponse::Ok().json(quote)
+    match quote_model.validate() {
+        Ok(_) => {
+            let mut write_guard = data.write().unwrap();
+            match write_guard.get_mut(&id) {
+                Some(quote) => {
+                    quote.message = quote_model.message.clone();
+                    HttpResponse::Ok().json(quote)
+                }
+                None => HttpResponse::NotFound().finish(),
+            }
         }
-        None => HttpResponse::NotFound().finish(),
+        Err(e) => HttpResponse::BadRequest().body(format!("Validation error: {:?}", e)),
     }
 }
 

@@ -20,6 +20,8 @@ warp = "0.2"
 config = "0.10"
 lazy_static = "1.4"
 actix-cors = "0.6.4"
+validator = "0.12"
+validator_derive = "0.12"
 
 # SWAGGER SECIFIC DEPENDENCIES
 utoipa = { version = "4.1.0", features = ["actix_extras", "chrono"] }
